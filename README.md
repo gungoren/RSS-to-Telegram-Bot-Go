@@ -1,10 +1,10 @@
-![RSSTT](rsstt.png)
+![RSSTT](img/rsstt.png)
 
 # RSS to Telegram bot with golang
 
 A self-hosted telegram golang bot that dumps posts from RSS feeds to a telegram chat. This script was created because all the third party services were unreliable.
 
-![Image of help menu](https://bokker.github.io/telegram.png)
+![Image of help menu](img/telegram.png)
 
 ### Docker
 
