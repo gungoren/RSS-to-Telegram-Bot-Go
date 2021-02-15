@@ -80,15 +80,15 @@ func sendMessageToChat(name string, item *gofeed.Item, bans []string) {
 		return
 	}
 
-	if isMessageAlreadySend(item.Link) {
+	/*if isMessageAlreadySend(item.Link) {
 		return
-	}
+	}*/
 
 	if checkEntryContainsBannedWord(bans, strings.ToLower(detail)) {
 		return
 	}
 
-	saveMessageSend(item.Link)
+	// saveMessageSend(item.Link)
 	_, _ = bot.Send(chatId, fmt.Sprintf("%s %s %s %s", prefix, strings.ReplaceAll(item.Link, "?source=rss", ""), name, budget))
 }
 
