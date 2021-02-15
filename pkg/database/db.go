@@ -25,7 +25,6 @@ func Setup() {
 	sqlStmt := `
 	CREATE TABLE IF NOT EXISTS rss (name text, link text, last text);
     CREATE TABLE IF NOT EXISTS banned_word (value text);
-	DROP TABLE IF EXISTS messages_send;
 	`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

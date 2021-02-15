@@ -80,29 +80,11 @@ func sendMessageToChat(name string, item *gofeed.Item, bans []string) {
 		return
 	}
 
-	/*if isMessageAlreadySend(item.Link) {
-		return
-	}*/
-
 	if checkEntryContainsBannedWord(bans, strings.ToLower(detail)) {
 		return
 	}
 
-	// saveMessageSend(item.Link)
 	_, _ = bot.Send(chatId, fmt.Sprintf("%s %s %s %s", prefix, strings.ReplaceAll(item.Link, "?source=rss", ""), name, budget))
-}
-
-func saveMessageSend(link string) {
-	db := database.GetDB()
-	stmt, err := db.Prepare("INSERT INTO messages_send('link') VALUES(?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	if _, err = stmt.Exec(link); err != nil {
-		log.Printf("Link save to history failed")
-		return
-	}
-	_ = stmt.Close()
 }
 
 func checkEntryContainsBannedWord(bans []string, entryDetail string) bool {
@@ -111,23 +93,6 @@ func checkEntryContainsBannedWord(bans []string, entryDetail string) bool {
 			return true
 		}
 	}
-	return false
-}
-
-func isMessageAlreadySend(link string) bool {
-	db := database.GetDB()
-	stmt, err := db.Prepare(`SELECT * FROM messages_send WHERE link = ?`)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if results, err := stmt.Query(link); err != nil {
-		return false
-	} else {
-		defer results.Close()
-		return results.Next()
-	}
-
 	return false
 }
 
