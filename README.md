@@ -1,14 +1,16 @@
-![RSSTT](img/rsstt.png)
+![RSSTT](https://github.com/gungoren/RSS-to-Telegram-Bot-Go/raw/master/img/rsstt.png)
 
 # RSS to Telegram bot with golang
 
+> Note: This repo is migrated from [Python version](https://github.com/gungoren/RSS-to-Telegram-Bot/)
+
 A self-hosted telegram golang bot that dumps posts from RSS feeds to a telegram chat. This script was created because all the third party services were unreliable.
 
-![Image of help menu](img/telegram.png)
+![Image of help menu](https://github.com/gungoren/RSS-to-Telegram-Bot-Go/raw/master/img/telegram.png)
 
 ### Docker
 
-For the docker image go to: https://hub.docker.com/r/bokker/rss.to.telegram/
+For the docker image go to: https://hub.docker.com/r/mehgungoren/rss.to.telegram/
 
 ### Installation
 
@@ -40,13 +42,19 @@ send /help to the bot to get this message:
 >
 > commands:
 >
-> **/add** title http://www(.)URL(.)com
->
 > **/help** Shows this text
+>
+> **/add** title http://www(.)URL(.)com
 >
 > **/remove** !Title! removes the RSS link
 >
 > **/list** Lists all the titles and the RSS links from the DB
+>
+> **/add_ban** word add word to ban list
+>
+> **/remove_ban** word removes word from ban word list
+>
+> **/list_ban** Lists all the banned words from the DB
 >
 > **/test** Inbuilt command that fetches a post from Reddits RSS.
 >
@@ -61,10 +69,10 @@ If the bot is set to for example 5 minutes and one feed manages to get 2 new pos
 ```
 docker create \
   --name=rss.to.telegram \
-  -e DELAY=60 \
-  -e TOKEN=InsertToken \
-  -e CHATID=InsertChatID \
+  -e DELAY=180 \
+  -e TOKEN=<TOKEN> \
+  -e CHATID=<CHATID> \
   -v /path/to/host/config:/config \
   --restart unless-stopped \
-  bokker/rss.to.telegram
+  mehgungoren/rss.to.telegram
 ```
