@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-type Monitor struct {}
+type Monitor struct{}
 
 func NewMonitor() *Monitor {
 	return &Monitor{}
 }
 
 var (
-	minHourlyPrice = 25.0
-	minFixPrice = 400
+	minHourlyPrice = 35.0
+	minFixPrice    = 400
 )
 
 func (m *Monitor) rssMonitor() {
