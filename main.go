@@ -62,6 +62,12 @@ func main() {
 		}
 	}(monitor)
 
+	go func(m *Monitor) {
+		for range time.Tick(10 * time.Minute) {
+			m.checkedExpiredVisitedLinks()
+		}
+	}(monitor)
+
 	bot.Start()
 }
 

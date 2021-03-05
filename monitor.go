@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Monitor struct{}
@@ -20,6 +21,8 @@ var (
 	minHourlyPrice = 35.0
 	minFixPrice    = 400
 )
+
+var visitedLinks = map[string]time.Time{}
 
 func (m *Monitor) rssMonitor() {
 
@@ -35,16 +38,18 @@ func (m *Monitor) rssMonitor() {
 		}
 		lastLink := feed.last
 		for _, item := range rss.Items {
-			if item.Link != feed.last {
+			if item.Link != lastLink {
 				sendMessageToChat(name, item, bans)
 			} else {
 				break
 			}
 		}
 
-		if len(rss.Items) > 0 {
-			lastLink = rss.Items[0].Link
+		if len(rss.Items) == 0 || rss.Items[0].Link == lastLink {
+			return
 		}
+
+		lastLink = rss.Items[0].Link
 
 		db := database.GetDB()
 		stmt, err := db.Prepare("UPDATE rss SET last = ? WHERE name = ? AND link = ?")
@@ -52,11 +57,22 @@ func (m *Monitor) rssMonitor() {
 			log.Fatal(err)
 		}
 		if _, err = stmt.Exec(lastLink, name, feed.link); err != nil {
-			log.Printf("ERROR: DB save ban error %v", err)
+			log.Printf("ERROR: DB update lastlink error %v", err)
 			return
 		}
 		_ = stmt.Close()
 	}
+}
+
+func (m *Monitor) checkedExpiredVisitedLinks() {
+	v := map[string]time.Time{}
+	yesterday := time.Now().Add(-24 * time.Hour)
+	for link, t := range visitedLinks {
+		if t.After(yesterday) {
+			v[link] = t
+		}
+	}
+	visitedLinks = v
 }
 
 func sendMessageToChat(name string, item *gofeed.Item, bans []string) {
@@ -64,6 +80,10 @@ func sendMessageToChat(name string, item *gofeed.Item, bans []string) {
 
 	sendMessage := true
 	budget := ""
+
+	if _, ok := visitedLinks[item.Link]; ok {
+		return
+	}
 
 	if strings.Contains(detail, "Hourly Range") {
 		sendMessage, budget = getHourlyPrice(detail)
@@ -84,6 +104,8 @@ func sendMessageToChat(name string, item *gofeed.Item, bans []string) {
 		return
 	}
 
+	visitedLinks[item.Link] = time.Now()
+	//log.Printf(fmt.Sprintf("%s %s %s %s", prefix, strings.ReplaceAll(item.Link, "?source=rss", ""), name, budget))
 	_, _ = bot.Send(chatId, fmt.Sprintf("%s %s %s %s", prefix, strings.ReplaceAll(item.Link, "?source=rss", ""), name, budget))
 }
 
