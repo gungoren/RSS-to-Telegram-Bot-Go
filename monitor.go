@@ -29,12 +29,12 @@ func (m *Monitor) rssMonitor() {
 	feeds := listFeeds()
 	bans := listBans()
 
+	fp := gofeed.NewParser()
 	for name, feed := range feeds {
-		fp := gofeed.NewParser()
 		rss, err := fp.ParseURL(feed.link)
 		if err != nil {
 			log.Println(err)
-			return
+			continue
 		}
 		lastLink := feed.last
 		for _, item := range rss.Items {
@@ -58,7 +58,7 @@ func (m *Monitor) rssMonitor() {
 		}
 		if _, err = stmt.Exec(lastLink, name, feed.link); err != nil {
 			log.Printf("ERROR: DB update lastlink error %v", err)
-			return
+			continue
 		}
 		_ = stmt.Close()
 	}
