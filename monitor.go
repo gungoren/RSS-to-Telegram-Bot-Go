@@ -45,10 +45,6 @@ func (m *Monitor) rssMonitor() {
 			}
 		}
 
-		if len(rss.Items) == 0 || rss.Items[0].Link == lastLink {
-			return
-		}
-
 		lastLink = rss.Items[0].Link
 
 		db := database.GetDB()
